@@ -5,7 +5,7 @@ $_version = '1.0';
 $_encoding = 'UTF-8';
 $_catList= array();
 $_newsList= array();
-$_path="http://renukatechnologies.in/demo/classic_flutter_news/";
+$_path="http://app.ewiglife.com/";
 $_images=$_path."images/";
 
 

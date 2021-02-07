@@ -208,7 +208,7 @@ class Details extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Related News!",
+                      "Related Dishes!",
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,

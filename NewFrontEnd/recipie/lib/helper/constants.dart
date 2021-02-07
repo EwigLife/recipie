@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Constants {
-  static String appName = "My recipes";
+  static String appName = "I' Made It";
   static String appPackage = "com.ewiglife.recipes";
 
-  //OTP Setup
   static String msg91AuthKey = "264945AeCxvjPPygN5c756de7";
-//TODO: update about and privacy policy
+
   static String appAbout =
       "<h3>Staying current is key in our fast-paced world.</h3>"
       "Most people wouldn’t even consider getting a physical morning newspaper anymore, "

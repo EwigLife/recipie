@@ -72,6 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Center(
               child: new Form(
                 key: _key,
+                // ignore: deprecated_member_use
                 autovalidate: _validate,
                 child: _getFormUI(),
               ),
@@ -87,8 +88,8 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         new Image.asset(
           'assets/images/logo.png',
-          height: 100,
-          width: 100,
+          height: 200,
+          width: 200,
         ),
         new SizedBox(height: 20.0),
         new TextFormField(
@@ -307,6 +308,7 @@ class CustomAlertDialogState extends State<CustomAlertDialog> {
         content: new SingleChildScrollView(
           child: Form(
             key: _resetKey,
+            // ignore: deprecated_member_use
             autovalidate: _resetValidate,
             child: ListBody(
               children: <Widget>[

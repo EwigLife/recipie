@@ -112,6 +112,7 @@ class _ForgotPageState extends State<ForgotPage> {
             child: Center(
               child: new Form(
                 key: _key,
+                // ignore: deprecated_member_use
                 autovalidate: _validate,
                 child: _getFormUI(),
               ),

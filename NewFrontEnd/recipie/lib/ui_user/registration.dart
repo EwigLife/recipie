@@ -68,6 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Center(
               child: new Form(
                 key: _key,
+                // ignore: deprecated_member_use
                 autovalidate: _validate,
                 child: _getFormUI(),
               ),
@@ -80,6 +81,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _getFormUI() {
     Future getImage() async {
+      // ignore: deprecated_member_use
       var image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
       setState(() {
@@ -275,8 +277,8 @@ class _RegisterPageState extends State<RegisterPage> {
       if (_image != null) {
         String base64Image = base64Encode(_image.readAsBytesSync());
         String fileName = _image.path.split("/").last;
-        http.post(Api.baseURL+"register.php", body: {
-          "profile":"true",
+        http.post(Api.baseURL + "register.php", body: {
+          "profile": "true",
           "image": base64Image,
           "image_name": fileName,
           "name": _registerData.name,
@@ -291,8 +293,8 @@ class _RegisterPageState extends State<RegisterPage> {
           print(err);
         });
       } else {
-        http.post(Api.baseURL+"register.php", body: {
-          "profile":"false",
+        http.post(Api.baseURL + "register.php", body: {
+          "profile": "false",
           "name": _registerData.name,
           "phone": _registerData.phone,
           "pass": _registerData.password,

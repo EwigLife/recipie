@@ -4,7 +4,6 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../podo/category.dart';
 import '../providers/home_provider.dart';
-import '../helper/constants.dart';
 import '../helper/api.dart';
 import '../ui/genre.dart';
 import '../widgets/book_list_item.dart';
@@ -20,7 +19,7 @@ class Home extends StatelessWidget {
           appBar: AppBar(
             centerTitle: true,
             title: Text(
-              "${Constants.appName}",
+              "I Made It",
               style: TextStyle(
                 fontSize: 20,
               ),
@@ -217,7 +216,7 @@ class Home extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              "Breaking News",
+                              "Most Read",
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -233,7 +232,7 @@ class Home extends StatelessWidget {
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: homeProvider.recent.feed.entry.length,
+                        itemCount: homeProvider.trends.feed.entry.length,
                         itemBuilder: (BuildContext context, int index) {
                           Entry entry = homeProvider.recent.feed.entry[index];
 
@@ -261,7 +260,7 @@ class Home extends StatelessWidget {
   Widget getSearchBarUI(BuildContext context) {
     // Create a text controller and use it to retrieve the current value
     // of the TextField.
-    final _txtSearch  = TextEditingController();
+    final _txtSearch = TextEditingController();
 
     return Padding(
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
@@ -295,7 +294,7 @@ class Home extends StatelessWidget {
                     cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: 'Search News...',
+                      hintText: 'Search Recipes',
                     ),
                   ),
                 ),
@@ -323,27 +322,28 @@ class Home extends StatelessWidget {
                 ),
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
-                  _txtSearch.text.isEmpty ? Fluttertoast.showToast(
-                    msg: "You just perform an empty search so we had nothing to show you.",
-                    toastLength: Toast.LENGTH_SHORT,
-                    timeInSecForIosWeb: 5,
-                  )
+                  _txtSearch.text.isEmpty
+                      ? Fluttertoast.showToast(
+                          msg:
+                              "You just perform an empty search so we had nothing to show you.",
+                          toastLength: Toast.LENGTH_SHORT,
+                          timeInSecForIosWeb: 5,
+                        )
                       : Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeft,
-                      child: Genre(
-                        title: "Search Result",
-                        url: Api.searchUrl+_txtSearch.text,
-                      ),
-                    ),
-                  );
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeft,
+                            child: Genre(
+                              title: "Search Result",
+                              url: Api.searchUrl + _txtSearch.text,
+                            ),
+                          ),
+                        );
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Icon(Icons.search,
-                      size: 25,
-                      color: Theme.of(context).backgroundColor),
+                      size: 25, color: Theme.of(context).backgroundColor),
                 ),
               ),
             ),

@@ -7,11 +7,10 @@ import '../providers/home_provider.dart';
 
 class Splash extends StatefulWidget {
   @override
-  _SplashState createState() => _SplashState ();
+  _SplashState createState() => _SplashState();
 }
 
 class _SplashState extends State<Splash> with TickerProviderStateMixin {
-
   nextPage() async {
     Navigator.pushReplacement(
       context,
@@ -33,20 +32,24 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
             padding: EdgeInsets.all(40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Staying current is key in our fast-paced world.',
-                  style: TextStyle(fontSize: 20.0,),
+                  "''No More Secret Recipes''",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
                 ),
                 SizedBox(height: 15),
                 Text(
-                  '- Classic Flutter News',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  '- EwigLife',
+                  style: TextStyle(fontSize: 18),
                 ),
                 SizedBox(height: 50),
                 Center(
-                  child: Image.asset("assets/images/ic_splash.png",
+                  child: Image.asset(
+                    "assets/images/logo.png",
                   ),
                 ),
               ],
@@ -64,11 +67,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                     margin: EdgeInsets.only(right: 40, bottom: 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Theme.of(context).accentColor, width: 1),
+                      border: Border.all(
+                          color: Theme.of(context).accentColor, width: 1),
                     ),
                     child: Text(
-                      'Start Reading...!',)
-                ),
+                      'Start Reading...!',
+                    )),
               ),
             ),
           ),

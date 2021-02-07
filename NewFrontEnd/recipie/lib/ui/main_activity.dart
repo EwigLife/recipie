@@ -12,7 +12,7 @@ import 'explore.dart';
 import 'favorites.dart';
 import 'settings.dart';
 
-class MainActivity extends StatefulWidget{
+class MainActivity extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
@@ -23,7 +23,7 @@ class _HomeState extends State<MainActivity> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: ()=>exitDialog(context),
+      onWillPop: () => exitDialog(context),
       child: Scaffold(
         body: PageView(
           physics: NeverScrollableScrollPhysics(),
@@ -36,7 +36,6 @@ class _HomeState extends State<MainActivity> {
             Profile(),
           ],
         ),
-
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: Theme.of(context).primaryColor,
           selectedItemColor: Theme.of(context).accentColor,
@@ -48,39 +47,39 @@ class _HomeState extends State<MainActivity> {
               icon: Icon(
                 Icons.home,
               ),
+              // ignore: deprecated_member_use
               title: SizedBox(),
             ),
-
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.category,
               ),
+              // ignore: deprecated_member_use
               title: SizedBox(),
             ),
-
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.dashboard,
               ),
+              // ignore: deprecated_member_use
               title: SizedBox(),
             ),
-
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.settings,
               ),
+              // ignore: deprecated_member_use
               title: SizedBox(),
             ),
           ],
           onTap: navigationTapped,
           currentIndex: _page,
         ),
-
       ),
     );
   }
 
-  exitDialog(BuildContext context){
+  exitDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => CustomAlertDialog(
@@ -99,9 +98,7 @@ class _HomeState extends State<MainActivity> {
                   fontSize: 18,
                 ),
               ),
-
               SizedBox(height: 25),
-
               Text(
                 "Do you really want to quit?",
                 style: TextStyle(
@@ -109,13 +106,10 @@ class _HomeState extends State<MainActivity> {
                   fontSize: 16,
                 ),
               ),
-
               SizedBox(height: 40),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-
                   Container(
                     height: 40,
                     width: 130,
@@ -130,7 +124,7 @@ class _HomeState extends State<MainActivity> {
                           fontSize: 16,
                         ),
                       ),
-                      onPressed: ()=> exit(0),
+                      onPressed: () => exit(0),
                       color: Theme.of(context).accentColor,
                     ),
                   ),
@@ -141,7 +135,8 @@ class _HomeState extends State<MainActivity> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      borderSide: BorderSide(color: Theme.of(context).accentColor),
+                      borderSide:
+                          BorderSide(color: Theme.of(context).accentColor),
                       child: Text(
                         "No",
                         style: TextStyle(
@@ -149,7 +144,7 @@ class _HomeState extends State<MainActivity> {
                           fontSize: 16,
                         ),
                       ),
-                      onPressed: ()=>Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context),
                       color: Colors.white,
                     ),
                   ),
@@ -170,13 +165,11 @@ class _HomeState extends State<MainActivity> {
   }
 
   void navigationTapped(int page) {
-    if(page == 2.0){
-      Provider.of<FavoritesProvider>(context, listen: false)
-          .getFeed();
+    if (page == 2.0) {
+      Provider.of<FavoritesProvider>(context, listen: false).getFeed();
       _pageController.jumpToPage(page);
-
-    }else{
-    _pageController.jumpToPage(page);
+    } else {
+      _pageController.jumpToPage(page);
     }
   }
 

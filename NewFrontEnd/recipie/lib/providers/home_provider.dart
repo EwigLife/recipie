@@ -26,6 +26,12 @@ class HomeProvider with ChangeNotifier {
       }).catchError((e) {
         throw (e);
       });
+      Api.getNews(Api.breaking).then((recent) {
+        setTrends(recent);
+        setLoading(false);
+      }).catchError((e) {
+        throw (e);
+      });
     }).catchError((e) {
       throw (e);
     });
