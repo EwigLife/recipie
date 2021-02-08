@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -8,7 +12,7 @@ import '../podo/category.dart';
 import '../providers/details_provider.dart';
 import '../ui/details.dart';
 
-class BookCard extends StatelessWidget {
+class BookCard extends StatefulWidget {
   final String img;
   final Entry entry;
 
@@ -19,12 +23,45 @@ class BookCard extends StatelessWidget {
   }) : super(key: key);
 
   static final uuid = Uuid();
-  final String imgTag = uuid.v4();
-  final String titleTag = uuid.v4();
-  final String authorTag = uuid.v4();
+
+  @override
+  _BookCardState createState() => _BookCardState();
+}
+
+class _BookCardState extends State<BookCard> {
+  final String imgTag = BookCard.uuid.v4();
+
+  final String titleTag = BookCard.uuid.v4();
+
+  final String authorTag = BookCard.uuid.v4();
+  BannerAd _bannerAd;
+
+  InterstitialAd _interstitialAd;
+
+  final _nativeAdController = NativeAdmobController();
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: InterstitialAd.testAdUnitId,
+        listener: (MobileAdEvent event) {
+          print('interstitial event: $event');
+        });
+  }
+
+  BannerAd createBannerAdd() {
+    return BannerAd(
+        adUnitId: BannerAd.testAdUnitId,
+        size: AdSize.smartBanner,
+        listener: (MobileAdEvent event) {
+          print('Bnner Event: $event');
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
+    Timer(Duration(seconds: 10), () {
+      _bannerAd?.show();
+    });
     return Container(
       width: 250,
       decoration: BoxDecoration(
@@ -43,15 +80,19 @@ class BookCard extends StatelessWidget {
           topRight: Radius.circular(10),
         ),
         onTap: () {
-          Provider.of<DetailsProvider>(context, listen: false).setEntry(entry);
+          _bannerAd?.dispose();
+          _bannerAd = null;
+          _interstitialAd?.show();
           Provider.of<DetailsProvider>(context, listen: false)
-              .getFeed(entry.related);
+              .setEntry(widget.entry);
+          Provider.of<DetailsProvider>(context, listen: false)
+              .getFeed(widget.entry.related);
           Navigator.push(
             context,
             PageTransition(
               type: PageTransitionType.rightToLeft,
               child: Details(
-                entry: entry,
+                entry: widget.entry,
                 imgTag: imgTag,
                 titleTag: titleTag,
                 authorTag: authorTag,
@@ -71,7 +112,7 @@ class BookCard extends StatelessWidget {
                   child: Hero(
                     tag: imgTag,
                     child: CachedNetworkImage(
-                      imageUrl: "$img",
+                      imageUrl: "${widget.img}",
                       placeholder: (context, url) => Container(
                           height: 125,
                           width: 248,
@@ -98,7 +139,7 @@ class BookCard extends StatelessWidget {
                       color: Theme.of(context).accentColor,
                     ),
                     child: Text(
-                      '${entry.category[0]}',
+                      '${widget.entry.category[0]}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).primaryColor,
@@ -115,7 +156,7 @@ class BookCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
               alignment: Alignment.centerLeft,
               child: Text(
-                "${entry.title}",
+                "${widget.entry.title}",
                 style: TextStyle(
                   fontWeight: FontWeight.w800,
                 ),
@@ -137,7 +178,7 @@ class BookCard extends StatelessWidget {
                   )),
                   Container(
                     padding: EdgeInsets.only(left: 5),
-                    child: Text("${entry.published}",
+                    child: Text("${widget.entry.published}",
                         style: TextStyle(
                           fontSize: 12,
                         )),
@@ -152,7 +193,7 @@ class BookCard extends StatelessWidget {
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 5),
-                    child: Text("${entry.newsViews}",
+                    child: Text("${widget.entry.newsViews}",
                         style: TextStyle(
                           fontSize: 12,
                         )),
@@ -164,5 +205,20 @@ class BookCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance.initialize(appId: 'YOUR_APP_ID');
+    _bannerAd = createBannerAdd()..load();
+    _interstitialAd = createInterstitialAd()..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
@@ -9,10 +11,44 @@ import '../ui/genre.dart';
 import '../widgets/book_list_item.dart';
 import '../widgets/book_card.dart';
 import '../widgets/spotlight.dart';
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flutter_native_admob/native_admob_controller.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  BannerAd _bannerAd;
+
+  InterstitialAd _interstitialAd;
+
+  final _nativeAdController = NativeAdmobController();
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: 'ca-app-pub-5534506225496412/8754411628',
+        listener: (MobileAdEvent event) {
+          print('interstitial event: $event');
+        });
+  }
+
+  BannerAd createBannerAdd() {
+    return BannerAd(
+        adUnitId: 'ca-app-pub-5534506225496412/5814221815',
+        size: AdSize.smartBanner,
+        listener: (MobileAdEvent event) {
+          print('Bnner Event: $event');
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
+    Timer(Duration(seconds: 10), () {
+      _bannerAd?.show();
+    });
+
     return Consumer<HomeProvider>(
       builder: (BuildContext context, HomeProvider homeProvider, Widget child) {
         return Scaffold(
@@ -113,6 +149,9 @@ class Home extends StatelessWidget {
                                       Radius.circular(5),
                                     ),
                                     onTap: () {
+                                      _bannerAd?.dispose();
+                                      _bannerAd = null;
+                                      _interstitialAd?.show();
                                       Navigator.push(
                                         context,
                                         PageTransition(
@@ -180,7 +219,7 @@ class Home extends StatelessWidget {
                         padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                         shrinkWrap: true,
                         physics: new NeverScrollableScrollPhysics(),
-                        itemCount: 2,
+                        itemCount: 10,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 1.0,
@@ -321,6 +360,9 @@ class Home extends StatelessWidget {
                   Radius.circular(32.0),
                 ),
                 onTap: () {
+                  _bannerAd?.dispose();
+                  _bannerAd = null;
+                  _interstitialAd?.show();
                   FocusScope.of(context).requestFocus(FocusNode());
                   _txtSearch.text.isEmpty
                       ? Fluttertoast.showToast(
@@ -351,5 +393,21 @@ class Home extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
+    _bannerAd = createBannerAdd()..load();
+    _interstitialAd = createInterstitialAd()..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 }

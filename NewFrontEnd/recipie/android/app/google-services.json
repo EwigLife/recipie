@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "318691610395",
+    "project_id": "i-made-it-app",
+    "storage_bucket": "i-made-it-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318691610395:android:7749bd9811638ca4338dbe",
+        "android_client_info": {
+          "package_name": "com.ewiglife.recipie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "318691610395-2li0n79os1dpbr9lfvbs10h9ah68idoj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrIyy77QsDVtoE0CT2x70saBzLLv3yaVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "318691610395-2li0n79os1dpbr9lfvbs10h9ah68idoj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
