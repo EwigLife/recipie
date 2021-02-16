@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
@@ -12,7 +11,6 @@ import '../widgets/book_list_item.dart';
 import '../widgets/book_card.dart';
 import '../widgets/spotlight.dart';
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -24,11 +22,10 @@ class _HomeState extends State<Home> {
 
   InterstitialAd _interstitialAd;
 
-  final _nativeAdController = NativeAdmobController();
-
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
-        adUnitId: 'ca-app-pub-5534506225496412/8754411628',
+        // adUnitId: InterstitialAd.testAdUnitId,
+        adUnitId: "ca-app-pub-5534506225496412/8754411628",
         listener: (MobileAdEvent event) {
           print('interstitial event: $event');
         });
@@ -36,7 +33,8 @@ class _HomeState extends State<Home> {
 
   BannerAd createBannerAdd() {
     return BannerAd(
-        adUnitId: 'ca-app-pub-5534506225496412/5814221815',
+        // adUnitId: BannerAd.testAdUnitId,
+        adUnitId: "ca-app-pub-5534506225496412/5814221815",
         size: AdSize.smartBanner,
         listener: (MobileAdEvent event) {
           print('Bnner Event: $event');
@@ -44,11 +42,22 @@ class _HomeState extends State<Home> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    Timer(Duration(seconds: 10), () {
-      _bannerAd?.show();
-    });
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
+    _bannerAd = createBannerAdd()..load();
+    _interstitialAd = createInterstitialAd()..load();
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    Timer(Duration(seconds: 5), () {
+      _bannerAd?.show(
+        anchorOffset: 80.0,
+        anchorType: AnchorType.bottom,
+      );
+    });
     return Consumer<HomeProvider>(
       builder: (BuildContext context, HomeProvider homeProvider, Widget child) {
         return Scaffold(
@@ -149,19 +158,35 @@ class _HomeState extends State<Home> {
                                       Radius.circular(5),
                                     ),
                                     onTap: () {
-                                      _bannerAd?.dispose();
-                                      _bannerAd = null;
-                                      _interstitialAd?.show();
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType.rightToLeft,
-                                          child: Genre(
-                                            title: "${link.title}",
-                                            url: link.href,
+                                      if (_bannerAd != null) {
+                                        _bannerAd.dispose();
+                                        _bannerAd = null;
+                                        _interstitialAd?.show();
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child: Genre(
+                                              title: "${link.title}",
+                                              url: link.href,
+                                            ),
                                           ),
-                                        ),
-                                      );
+                                        );
+                                      } else {
+                                        _interstitialAd.show();
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type:
+                                                PageTransitionType.rightToLeft,
+                                            child: Genre(
+                                              title: "${link.title}",
+                                              url: link.href,
+                                            ),
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: Center(
                                       child: Padding(
@@ -219,7 +244,7 @@ class _HomeState extends State<Home> {
                         padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                         shrinkWrap: true,
                         physics: new NeverScrollableScrollPhysics(),
-                        itemCount: 10,
+                        itemCount: 2,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           childAspectRatio: 1.0,
@@ -393,15 +418,6 @@ class _HomeState extends State<Home> {
         ],
       ),
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAdMob.instance
-        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
-    _bannerAd = createBannerAdd()..load();
-    _interstitialAd = createInterstitialAd()..load();
   }
 
   @override

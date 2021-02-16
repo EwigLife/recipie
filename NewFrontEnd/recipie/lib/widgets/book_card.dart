@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_admob/native_admob_controller.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -38,30 +37,17 @@ class _BookCardState extends State<BookCard> {
 
   InterstitialAd _interstitialAd;
 
-  final _nativeAdController = NativeAdmobController();
-
   InterstitialAd createInterstitialAd() {
     return InterstitialAd(
-        adUnitId: InterstitialAd.testAdUnitId,
+        // adUnitId: InterstitialAd.testAdUnitId,
+        adUnitId: "ca-app-pub-5534506225496412/8754411628",
         listener: (MobileAdEvent event) {
           print('interstitial event: $event');
         });
   }
 
-  BannerAd createBannerAdd() {
-    return BannerAd(
-        adUnitId: BannerAd.testAdUnitId,
-        size: AdSize.smartBanner,
-        listener: (MobileAdEvent event) {
-          print('Bnner Event: $event');
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
-    Timer(Duration(seconds: 10), () {
-      _bannerAd?.show();
-    });
     return Container(
       width: 250,
       decoration: BoxDecoration(
@@ -210,8 +196,8 @@ class _BookCardState extends State<BookCard> {
   @override
   void initState() {
     super.initState();
-    FirebaseAdMob.instance.initialize(appId: 'YOUR_APP_ID');
-    _bannerAd = createBannerAdd()..load();
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
     _interstitialAd = createInterstitialAd()..load();
   }
 

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:recipes/helper/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -10,7 +13,7 @@ import '../providers/details_provider.dart';
 import '../widgets/book_list_item.dart';
 
 // ignore: must_be_immutable
-class Details extends StatelessWidget {
+class Details extends StatefulWidget {
   final Entry entry;
   final String imgTag;
   final String titleTag;
@@ -25,7 +28,41 @@ class Details extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _DetailsState createState() => _DetailsState();
+}
+
+class _DetailsState extends State<Details> {
+  BannerAd _bannerAd;
+
+  InterstitialAd _interstitialAd;
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        adUnitId: InterstitialAd.testAdUnitId,
+        // adUnitId: "ca-app-pub-5534506225496412/8754411628",
+        listener: (MobileAdEvent event) {
+          print('interstitial event: $event');
+        });
+  }
+
+  BannerAd createBannerAdd() {
+    return BannerAd(
+        // adUnitId: BannerAd.testAdUnitId,
+        adUnitId: "ca-app-pub-5534506225496412/5814221815",
+        size: AdSize.smartBanner,
+        listener: (MobileAdEvent event) {
+          print('Bnner Event: $event');
+        });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    Timer(Duration(seconds: 5), () {
+      _bannerAd?.show(
+        anchorOffset: 80.0,
+        anchorType: AnchorType.bottom,
+      );
+    });
     return Consumer<DetailsProvider>(
       builder: (BuildContext context, DetailsProvider detailsProvider,
           Widget child) {
@@ -52,8 +89,8 @@ class Details extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   Share.share(
-                    "I am Reading ${entry.title}. on ${Constants.appName}. \n\n Download App @ https://play.google.com/store/apps/details?id=${Constants.appPackage}",
-                    subject: '${entry.title}',
+                    "I am Reading ${widget.entry.title}. on ${Constants.appName}. \n\n Download App @ https://play.google.com/store/apps/details?id=${Constants.appPackage}",
+                    subject: '${widget.entry.title}',
                   );
                 },
                 icon: Icon(
@@ -73,9 +110,9 @@ class Details extends StatelessWidget {
                       Radius.circular(10.0),
                     ),
                     child: Hero(
-                      tag: imgTag,
+                      tag: widget.imgTag,
                       child: CachedNetworkImage(
-                        imageUrl: "${entry.coverImage}",
+                        imageUrl: "${widget.entry.coverImage}",
                         placeholder: (context, url) => Container(
                           child: Center(
                             child: CircularProgressIndicator(),
@@ -98,11 +135,11 @@ class Details extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Hero(
-                      tag: titleTag,
+                      tag: widget.titleTag,
                       child: Material(
                         type: MaterialType.transparency,
                         child: Text(
-                          "${entry.title.replaceAll(r"\", "")}",
+                          "${widget.entry.title.replaceAll(r"\", "")}",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -127,7 +164,7 @@ class Details extends StatelessWidget {
                           )),
                           Container(
                             padding: EdgeInsets.only(left: 5),
-                            child: Text("${entry.published}",
+                            child: Text("${widget.entry.published}",
                                 style: TextStyle(
                                   fontSize: 12,
                                 )),
@@ -142,7 +179,7 @@ class Details extends StatelessWidget {
                           ),
                           Container(
                             padding: EdgeInsets.only(left: 5),
-                            child: Text("${entry.newsViews}",
+                            child: Text("${widget.entry.newsViews}",
                                 style: TextStyle(
                                   fontSize: 12,
                                 )),
@@ -153,16 +190,16 @@ class Details extends StatelessWidget {
                     SizedBox(
                       height: 5,
                     ),
-                    entry.category == null
+                    widget.entry.category == null
                         ? SizedBox()
                         : Container(
                             height: 25,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: entry.category.length,
+                              itemCount: widget.entry.category.length,
                               shrinkWrap: true,
                               itemBuilder: (BuildContext context, int index) {
-                                String cat = entry.category[index];
+                                String cat = widget.entry.category[index];
                                 return Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 5, vertical: 3),
@@ -191,7 +228,7 @@ class Details extends StatelessWidget {
                 color: Theme.of(context).textTheme.caption.color,
               ),
               Html(
-                data: "${entry.summary}",
+                data: "${widget.entry.summary}",
                 // backgroundColor: Theme.of(context).backgroundColor,
                 // linkStyle: const TextStyle(
                 //   color: Colors.redAccent,
@@ -263,5 +300,21 @@ class Details extends StatelessWidget {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
+    _bannerAd = createBannerAdd()..load();
+    _interstitialAd = createInterstitialAd()..load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 }

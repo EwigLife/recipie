@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,7 @@ import '../podo/category.dart';
 import '../providers/details_provider.dart';
 import '../ui/details.dart';
 
-class BookListItem extends StatelessWidget {
+class BookListItem extends StatefulWidget {
   final String img;
   final String title;
   final String author;
@@ -25,23 +26,44 @@ class BookListItem extends StatelessWidget {
   }) : super(key: key);
 
   static final uuid = Uuid();
-  final String imgTag = uuid.v4();
-  final String titleTag = uuid.v4();
-  final String authorTag = uuid.v4();
+
+  @override
+  _BookListItemState createState() => _BookListItemState();
+}
+
+class _BookListItemState extends State<BookListItem> {
+  final String imgTag = BookListItem.uuid.v4();
+
+  final String titleTag = BookListItem.uuid.v4();
+
+  final String authorTag = BookListItem.uuid.v4();
+
+  InterstitialAd _interstitialAd;
+
+  InterstitialAd createInterstitialAd() {
+    return InterstitialAd(
+        // adUnitId: InterstitialAd.testAdUnitId,
+        adUnitId: "ca-app-pub-5534506225496412/8754411628",
+        listener: (MobileAdEvent event) {
+          print('interstitial event: $event');
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Provider.of<DetailsProvider>(context, listen: false).setEntry(entry);
+        _interstitialAd?.show();
         Provider.of<DetailsProvider>(context, listen: false)
-            .getFeed(entry.related);
+            .setEntry(widget.entry);
+        Provider.of<DetailsProvider>(context, listen: false)
+            .getFeed(widget.entry.related);
         Navigator.push(
           context,
           PageTransition(
             type: PageTransitionType.rightToLeft,
             child: Details(
-              entry: entry,
+              entry: widget.entry,
               imgTag: imgTag,
               titleTag: titleTag,
               authorTag: authorTag,
@@ -76,7 +98,7 @@ class BookListItem extends StatelessWidget {
                 child: Hero(
                   tag: imgTag,
                   child: CachedNetworkImage(
-                    imageUrl: "$img",
+                    imageUrl: "${widget.img}",
                     placeholder: (context, url) => Container(
                       height: 100,
                       width: 100,
@@ -111,7 +133,7 @@ class BookListItem extends StatelessWidget {
                     child: Material(
                       type: MaterialType.transparency,
                       child: Text(
-                        "${title.replaceAll(r"\", "")}",
+                        "${widget.title.replaceAll(r"\", "")}",
                         style: TextStyle(
                           color: Theme.of(context).accentColor,
                         ),
@@ -124,7 +146,7 @@ class BookListItem extends StatelessWidget {
                     height: 3,
                   ),
                   Text(
-                    "${desc.replaceAll(r"\n", "\n").replaceAll(r"\r", "").replaceAll(r"\'", "'")}",
+                    "${widget.desc.replaceAll(r"\n", "\n").replaceAll(r"\r", "").replaceAll(r"\'", "'")}",
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).textTheme.headline6.color,
@@ -145,7 +167,7 @@ class BookListItem extends StatelessWidget {
                           color: Theme.of(context).accentColor,
                         ),
                         child: Text(
-                          '$author',
+                          '${widget.author}',
                           style: TextStyle(
                             fontSize: 10,
                             color: Theme.of(context).primaryColor,
@@ -162,12 +184,11 @@ class BookListItem extends StatelessWidget {
                       ),
                       Container(
                         padding: EdgeInsets.only(left: 5),
-                        child: Text("${entry.published}",
+                        child: Text("${widget.entry.published}",
                             style: TextStyle(
                               fontSize: 10,
                             )),
                       ),
-
                     ],
                   ),
                 ],
@@ -177,5 +198,19 @@ class BookListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseAdMob.instance
+        .initialize(appId: 'ca-app-pub-5534506225496412~3537743967');
+    _interstitialAd = createInterstitialAd()..load();
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd?.dispose();
+    super.dispose();
   }
 }
